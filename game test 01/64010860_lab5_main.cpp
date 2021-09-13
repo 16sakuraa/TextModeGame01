@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<windows.h>
 #include<conio.h>
+#include<time.h>
 
 void setcolor(int fg, int bg)
 {
@@ -60,19 +61,69 @@ void clear_bullet(int x, int y, int bulletStatus)
 	printf(" ");
 }
 
+void draw_star(int x, int y)
+{
+	int sx, sy;
+	sx = x;
+	sy = y;
+	gotoxy(sx, sy);
+	setcolor(6, 0);
+	printf("*");
+}
+
+void clear_star(int x, int y)
+{
+	int csx, csy;
+	csx = x;
+	csy = y;
+	gotoxy(csx, csy);
+	printf(" ");
+}
+
+void scoreupdate(int score)
+{
+	gotoxy(100, 1);
+	setcolor(5, 0);
+	printf("Score : ");
+	printf("%d", score);
+}
+
+char cursor(int x, int y) {
+	HANDLE hStd = GetStdHandle(STD_OUTPUT_HANDLE);
+	char buf[2]; COORD c = { x,y }; DWORD num_read;
+	if (
+		!ReadConsoleOutputCharacter(hStd, (LPTSTR)buf, 1, c, (LPDWORD)&num_read))
+
+		return '\0';
+	else
+		return buf[0];
+
+}
+
 
 int main()
 {
 	char ch = ' ';
-	int x = 38, y = 20, i = 0;
+	int x = 38, y = 20, i = 0, j = 0;
 	int left = 0, right = 0, up = 0, down = 0;
 	int bulletx[5], bullety[5];
 	int bulletStatus[5];
+	int starx, stary;
+	int score = 0, oldscore = 0;
+	srand(time(NULL));
 	for (i = 0; i <= 5; i++)
 	{
 		bulletStatus[i] = 0;
 	}
+	for (i = 0; i < 20; i++)
+	{
+		stary = rand() % 5 + 1;
+		starx = rand() % 60 + 10;
+		draw_star(starx, stary);
+
+	}
 	setcursor(0);
+	scoreupdate(score);
 	draw_ship(x, y);
 	do {
 		if (_kbhit()) {
@@ -146,11 +197,22 @@ int main()
 			draw_ship(++x, y);
 
 		}
+
+
 		if (bulletStatus[0] == 1)
 		{
+
 			clear_bullet(bulletx[0], bullety[0], 0);
 			if (bullety[0] == 0)
 			{
+				bulletStatus[0] = 0;
+			}
+			else if (cursor(bulletx[0], bullety[0] - 1) == '*')
+			{
+				Beep(700, 100);
+				score += 100;
+				//	scoreupdate(score);
+				clear_star(bulletx[0], bullety[0] - 1);
 				bulletStatus[0] = 0;
 			}
 			else
@@ -158,11 +220,22 @@ int main()
 				draw_bullet(bulletx[0], --bullety[0], 0);
 			}
 		}
+
+
+
+
 		if (bulletStatus[1] == 1)
 		{
 			clear_bullet(bulletx[1], bullety[1], 1);
 			if (bullety[1] == 0)
 			{
+				bulletStatus[1] = 0;
+			}
+			else if (cursor(bulletx[1], bullety[1] - 1) == '*')
+			{
+				Beep(700, 100);
+				score += 100;
+				clear_star(bulletx[1], bullety[1] - 1);
 				bulletStatus[1] = 0;
 			}
 			else
@@ -175,6 +248,13 @@ int main()
 			clear_bullet(bulletx[2], bullety[2], 2);
 			if (bullety[2] == 0)
 			{
+				bulletStatus[2] = 0;
+			}
+			else if (cursor(bulletx[2], bullety[2] - 1) == '*')
+			{
+				Beep(700, 100);
+				score += 100;
+				clear_star(bulletx[2], bullety[2] - 1);
 				bulletStatus[2] = 0;
 			}
 			else
@@ -190,6 +270,13 @@ int main()
 			{
 				bulletStatus[3] = 0;
 			}
+			else if (cursor(bulletx[3], bullety[3] - 1) == '*')
+			{
+				Beep(700, 100);
+				score += 100;
+				clear_star(bulletx[3], bullety[3] - 1);
+				bulletStatus[3] = 0;
+			}
 			else
 			{
 				draw_bullet(bulletx[3], --bullety[3], 3);
@@ -202,10 +289,22 @@ int main()
 			{
 				bulletStatus[4] = 0;
 			}
+			else if (cursor(bulletx[4], bullety[4] - 1) == '*')
+			{
+				Beep(700, 100);
+				score += 100;
+				clear_star(bulletx[4], bullety[4] - 1);
+				bulletStatus[4] = 0;
+			}
 			else
 			{
 				draw_bullet(bulletx[4], --bullety[4], 4);
 			}
+		}
+		if (score > oldscore)
+		{
+			scoreupdate(score);
+			oldscore = score;
 		}
 
 		Sleep(100);
