@@ -78,11 +78,14 @@ void clear_star(int x, int y)
 	csy = y;
 	gotoxy(csx, csy);
 	printf(" ");
+	int stary = rand() % 5 + 1;
+	int starx = rand() % 60 + 10;
+	draw_star(starx, stary);
 }
 
 void scoreupdate(int score)
 {
-	gotoxy(100, 1);
+	gotoxy(75, 1);
 	setcolor(5, 0);
 	printf("Score : ");
 	printf("%d", score);
